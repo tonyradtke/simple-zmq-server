@@ -15,27 +15,27 @@ public:
   zmq::context_t m_ctx;
   zmq::socket_t m_sock;
 
-  ~Server(); 
-  Server(bool = false); 
-
   std::mutex m_mutex;
   
-  bool m_killed; 
-  bool m_isLocalHost = false;
+  bool m_killed {false}; 
+  bool m_isLocalHost {false};
 
   std::queue<std::string> m_messageQueue;
   std::vector<std::thread> m_threadPool; 
 
-  void start_polling_thread();
+  ~Server(); 
+  Server(bool = false); 
+  Server(std::string, std::string);
 
   bool has_message();
 
-  std::string wait_for_request();
   std::string pop_queue();
+  std::string wait_for_request();
   std::string message_to_string(zmq::message_t&);
 
   void kill();
   void poll_request();
+  void start_polling_thread();
   void send_response(std::string); 
   void push_to_queue(std::string&);
 

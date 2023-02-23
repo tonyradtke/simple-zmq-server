@@ -2,29 +2,25 @@
 
 #define kSLEEP_MS 1
 
-Client::Client(bool f_localhost) {
+Client::Client(std::string f_ip, std::string f_port) {
   m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
-  if (f_localhost) {
-    m_sock.connect("tcp://127.0.0.1:8000");
-    std::cout << "created a localhost client \n";
-  }
-  else {
-    //this should be an addr we choose, cannot be *
-    std::cout << "this is invalid for now..\n";
-    return;
-    #if 0
-    m_sock.connect("tcp://*:8000");
-    std::cout << "created a server!\n";
-    #endif
-  }
+
+  const std::string addr = "tcp://" + f_ip + ":" + f_port;
+  m_sock.connect(addr);
+
+  std::cout << "created a client at : " << addr << "\n";
   start_polling_thread();
-  m_killed = false;
-};
-
-
-void Client::send_request(std::string f_response) {
-  zmq_send(m_sock, strdup(f_response.c_str()), strlen(f_response.c_str()), 0);
 }
+
+
+Client::Client() {
+  m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
+  m_sock.connect("tcp://127.0.0.1:8000");
+
+  std::cout << "created a localhost client \n";
+
+  start_polling_thread();
+};
 
 
 void Client::start_polling_thread() {
@@ -85,12 +81,13 @@ void Client::push_to_queue(std::string& f_m) {
 };
 
 
+void Client::send_request(std::string f_response) {
+  zmq_send(m_sock, strdup(f_response.c_str()), strlen(f_response.c_str()), 0);
+}
+
+
 std::string Client::message_to_string(zmq::message_t& f_msg) {
-  size_t msg_size = f_msg.size();
-  void* buffer = f_msg.data();
-  char* sp = static_cast<char*>(buffer);
-  std::string res(sp, msg_size);
-  return res;
+  return std::string(static_cast<char*>(f_msg.data()), f_msg.size());
 }
 
 

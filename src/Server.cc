@@ -2,6 +2,17 @@
 
 #define kSLEEP_MS 1 
 
+Server::Server(std::string f_ip, std::string f_port) {
+  m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
+  const std::string addr = "tcp://" + f_ip + ":" + f_port;
+  m_sock.bind(addr);
+  
+  std::cout << "created a server that can only read from : " << addr << "\n";
+
+  start_polling_thread();
+}
+
+
 Server::Server(bool f_localhost) {
   m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
   if (f_localhost) {
@@ -10,12 +21,10 @@ Server::Server(bool f_localhost) {
   }
   else {
     m_sock.bind("tcp://*:8000");
-    std::cout << "created a server\n";
+    std::cout << "created an open server\n";
   }
 
   start_polling_thread();
-  m_killed = false;
-
 };
 
 
@@ -34,6 +43,7 @@ std::string Server::wait_for_request() {
 void Server::start_polling_thread() {
   m_threadPool.push_back(std::thread([&](){ poll_request(); }));
 }
+
 
 void Server::poll_request() {
   while (true) {
@@ -59,34 +69,29 @@ void Server::poll_request() {
 }
 
 
-void Server::send_response(std::string f_response) {
-  zmq_send(m_sock, strdup(f_response.c_str()), strlen(f_response.c_str()), 0);
-}
-
-
 std::string Server::pop_queue() {
-    m_mutex.lock();
-    std::string j = m_messageQueue.front();
-    m_messageQueue.pop();
-    m_mutex.unlock();
-    return j;
+  m_mutex.lock();
+  std::string j = m_messageQueue.front();
+  m_messageQueue.pop();
+  m_mutex.unlock();
+  return j;
 }
 
 
 void Server::push_to_queue(std::string& f_m) { 
   m_mutex.lock(); 
-  //std::cout << "adding message to Server's queue : " << f_m << "\n";
   m_messageQueue.push((f_m));
   m_mutex.unlock();
 };
 
 
-std::string Server::message_to_string(zmq::message_t& f_msg) {
-  size_t msg_size = f_msg.size();
-  void* buffer = f_msg.data();
-  char* sp = static_cast<char*>(buffer);
-  std::string res(sp, msg_size);
-  return res;
+void Server::send_response(std::string f_response) {
+  zmq_send(m_sock, strdup(f_response.c_str()), strlen(f_response.c_str()), 0);
+}
+
+
+std::string Server::message_to_string(zmq::message_t& f_msg) { //comes through as void*
+  return std::string(static_cast<char*>(f_msg.data()), f_msg.size());
 }
 
 
