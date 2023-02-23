@@ -15,6 +15,7 @@ Server::Server(std::string f_ip, std::string f_port) {
 
 Server::Server(bool f_localhost) {
   m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
+
   if (f_localhost) {
     m_sock.bind("tcp://127.0.0.1:8000");
     std::cout << "created a localhost server\n";
