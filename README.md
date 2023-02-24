@@ -16,7 +16,9 @@
       <li> follow the build instructions </li>
     </ul>
   </li>
+  <br>
   <li> Download, Build and Install simple-zmq-server with CMake 
+    <br>
     <ul>
       <li> git clone https://github.com/tonyradtke/simple-zmq-server.git </li>
       <li> cd simple-zmq-server </li>
@@ -26,24 +28,29 @@
       <li> make install </li>
     </ul>
   </li>
+  <br>
   <li>  Build and Run the demo to make sure things are working 
+    <br>
     <ul> 
       <li> cd demo </li>
       <li> mkdir build </li>
       <li> cd build </li>
       <li> cmake . </li>
       <li> make </li>
-      <li> ./bin/\_\_demo\_\_ </li>
+      <li> ./bin/__demo__ </li>
     </ul>
   </li>
+  <br>
   <li> Include and Link against simple-zmq-server and cppzmq in your project </li>
+    <br>
     <ul>
-      <li> find\_library("simple-zmq-server" STATIC lib) </li>
-      <li> find\_package(cppzmq) </li>
-      <li> target\_link\_libraries(${YOUR\_BINARY} PUBLIC "simple-zmq-server") </li>
-      <li> target\_link\_libraries(${YOUR\_BINARY} PUBLIC cppzmq) </li>
+      <li> find_library("simple-zmq-server" STATIC lib) </li>
+      <li> find_package(cppzmq) </li>
+      <li> target_link_libraries(${YOUR_BINARY} PUBLIC "simple-zmq-server") </li>
+      <li> target_link_libraries(${YOUR_BINARY} PUBLIC cppzmq) </li>
     </ul> 
   </li>
+  <br>
 </ol>
 
 
