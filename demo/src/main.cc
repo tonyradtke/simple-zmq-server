@@ -1,8 +1,10 @@
-#include "Server.hh"
-#include "Client.hh"
+#include <simplezmqserver.hh>
 
 int main() {
 
+
+
+//operates as a pair
 //create our localhost client and server
 Server server(true); //localhost
 Client client; //localhost
