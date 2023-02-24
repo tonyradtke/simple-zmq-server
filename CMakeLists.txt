@@ -9,9 +9,7 @@ project(zmqserver)
 #
 # set vars
 #
-#SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 SET(LIB_NAME "simple-zmq-server")
-#SET(DEMO_BINARY "__demo__")
 
 #
 # wrangle files
@@ -22,7 +20,6 @@ find_package(cppzmq)
 include_directories("include/")
 
 file(GLOB LIB_SOURCES "src/*.cc")
-#file(GLOB EXE_SOURCES "driver/*.cc")
 
 add_library(${LIB_NAME} STATIC ${LIB_SOURCES})
 
@@ -30,11 +27,8 @@ add_library(${LIB_NAME} STATIC ${LIB_SOURCES})
 #
 # handle linking 
 #
-#add_executable(${DEMO_BINARY} ${EXE_SOURCES})
 
 target_link_libraries(${LIB_NAME} PUBLIC cppzmq)
-#target_link_libraries(${DEMO_BINARY} PUBLIC ${LIB_NAME})
-
 
 #
 # install the lib and include files for use
