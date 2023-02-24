@@ -12,13 +12,12 @@
 <ol>
   <li> Download and build Dependencies <
     <ul>
-      <li> download [cppzmq](https://github.com/zeromq/cppzmq) </li>
+      <li> download cppzmq : https://github.com/zeromq/cppzmq </li>
       <li> follow the build instructions </li>
     </ul>
   </li>
   <br>
   <li> Download, Build and Install simple-zmq-server with CMake 
-    <br>
     <ul>
       <li> git clone https://github.com/tonyradtke/simple-zmq-server.git </li>
       <li> cd simple-zmq-server </li>
@@ -30,7 +29,6 @@
   </li>
   <br>
   <li>  Build and Run the demo to make sure things are working 
-    <br>
     <ul> 
       <li> cd demo </li>
       <li> mkdir build </li>
@@ -42,7 +40,6 @@
   </li>
   <br>
   <li> Include and Link against simple-zmq-server and cppzmq in your project </li>
-    <br>
     <ul>
       <li> find_library("simple-zmq-server" STATIC lib) </li>
       <li> find_package(cppzmq) </li>
