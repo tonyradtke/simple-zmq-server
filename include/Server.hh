@@ -24,8 +24,8 @@ public:
   std::vector<std::thread> m_threadPool; 
 
   ~Server(); 
-  Server(bool = false); 
-  Server(std::string, std::string);
+  Server(bool = true); 
+  Server(std::string, std::string, std::string);
 
   bool has_message();
 

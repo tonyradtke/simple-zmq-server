@@ -2,22 +2,25 @@
 
 #define kSLEEP_MS 1 
 
-Server::Server(std::string f_ip, std::string f_port) {
-  m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
+
+//pair
+Server::Server(std::string f_ip, std::string f_port, std::string f_topic) {
+  m_sock = zmq::socket_t(m_ctx, zmq::socket_type::sub);
   const std::string addr = "tcp://" + f_ip + ":" + f_port;
-  m_sock.bind(addr);
+  m_sock.connect(addr);
   
   std::cout << "created a server that can only read from : " << addr << "\n";
 
+  m_sock.set(zmq::sockopt::subscribe, f_topic);
   start_polling_thread();
 }
 
 
 Server::Server(bool f_localhost) {
-  m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pair);
+  m_sock = zmq::socket_t(m_ctx, zmq::socket_type::sub);
 
   if (f_localhost) {
-    m_sock.bind("tcp://127.0.0.1:8000");
+    m_sock.connect("tcp://127.0.0.1:8000");
     std::cout << "created a localhost server\n";
   }
   else {
@@ -25,6 +28,7 @@ Server::Server(bool f_localhost) {
     std::cout << "created an open server\n";
   }
 
+  m_sock.set(zmq::sockopt::subscribe, "A");
   start_polling_thread();
 };
 
@@ -54,16 +58,22 @@ void Server::poll_request() {
       return;
     }
   
-    zmq::message_t message;
+    //[0] is topic
+    //[1] is message
+    std::vector<zmq::message_t> messages;
 
-    auto ret = m_sock.recv(message, zmq::recv_flags::dontwait);
+    auto ret =  zmq::recv_multipart(m_sock, std::back_inserter(messages), zmq::recv_flags::dontwait);
 
     if (not ret) {
       std::this_thread::sleep_for(std::chrono::milliseconds(kSLEEP_MS)); //dont shread the cpu polling :)
       continue;
     }
 
-    std::string msg_str = message_to_string(message);
+    if (messages.size() != 2) {
+      continue; 
+    }
+
+    std::string msg_str = message_to_string(messages.back());
 
     push_to_queue(msg_str);
   }
@@ -86,11 +96,6 @@ void Server::push_to_queue(std::string& f_m) {
 };
 
 
-void Server::send_response(std::string f_response) {
-  zmq_send(m_sock, strdup(f_response.c_str()), strlen(f_response.c_str()), 0);
-}
-
-
 std::string Server::message_to_string(zmq::message_t& f_msg) { //comes through as void*
   return std::string(static_cast<char*>(f_msg.data()), f_msg.size());
 }
@@ -104,6 +109,7 @@ bool Server::has_message() {
 void Server::kill() {
   m_killed = true;
 }
+
 
 Server::~Server() {
   kill();

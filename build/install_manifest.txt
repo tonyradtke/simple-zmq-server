@@ -1,0 +1,4 @@
+/usr/local/lib/libsimple-zmq-server.a
+/usr/local/include//simplezmqserver.hh
+/usr/local/include//Server.hh
+/usr/local/include//Client.hh

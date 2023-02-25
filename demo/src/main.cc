@@ -2,26 +2,48 @@
 
 int main() {
 
+  //create our localhost client and server
+  Server server; 
+  Client client; 
 
+  //give the server time to start polling before we send everything
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-//operates as a pair
-//create our localhost client and server
-Server server(true); //localhost
-Client client; //localhost
+  std::vector<std::string> messages {"hello", "there", "server", "how", "are", "you?"};
 
-//send req to server
-client.send_request("hello");
+  //send the server messages
+  for (const auto& message : messages) {
+    client.send_request(message);
+  }
 
-//wait for the server to pop us the oldest request in teh q
-std::string req = server.wait_for_request();
-std::cout << " message from queue : " << req  << "\n";
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-//send the client the response from the server
-server.send_response(req + " world");
+  //let the messaages fill the queue, then read from there
 
-//wait for the client to pop us the oldeest from q
-std::string result = client.wait_for_response();
-std::cout << "message from server : " << result << "\n";
+  while (server.has_message()) {
+    std::cout << "message from queue : " << server.pop_queue() << "\n";
+  } 
+  
+  std::cout << " resending messages to server.\n";
+
+  //send the server messages again, this time we poll directly for each message 
+  for (const auto& message : messages) {
+    client.send_request(message);
+  }
+  
+
+  //wait for the server to receive each message
+  for (int i = 0; i < messages.size(); ++i) {
+
+    std::string req = server.wait_for_request();
+
+    if (req != messages[i]) {
+      std::cout << "read in the wrong message, error!\n";
+      continue;
+    }
+
+    std::cout << "server received message : " << req  << "\n";
+  }
 
 
 
