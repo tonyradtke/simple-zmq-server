@@ -3,8 +3,12 @@
 int main() {
 
   //create our localhost client and server
-  Server server; 
-  Client client; 
+  const std::string ip {"127.0.0.1"};
+  const std::string port {"8000"};
+  const std::string topic {"B"};
+  
+  Server server(ip, port, topic); 
+  Client client(ip, port, topic); 
 
   //give the server time to start polling before we send everything
   std::this_thread::sleep_for(std::chrono::milliseconds(100));

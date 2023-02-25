@@ -1,9 +1,9 @@
 <h2> Introduction </h2>
 
   - This is intended to be a simple string based server/client using a c++ binding for zmq.
-  - Server operates similar to the consumer in the producer consumer patter, polling and adding 
-    requests to its queue.
-  - Client just sends requests to a server.
+  - Server operates as a subscriber, listening to a port and topic, adding any message to its queue. 
+  - Client acts as a publisher, sending messages on a topic to some server. 
+
 
 <h2> Example </h2>
 
@@ -61,7 +61,18 @@
 
   ```
  
-  
+  - We can also choose what address, port and topic our server and client use : 
+
+  ```cpp
+
+    const std::string ip {"127.0.0.1"};
+    const std::string port {"8000"};
+    const std::string topic {"B"};
+
+    Server server(ip, port, topic); 
+    Client client(ip, port, topic); 
+
+  ``` 
 
 <h2> Dependencies </h2>
 

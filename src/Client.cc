@@ -2,8 +2,9 @@
 
 #define kSLEEP_MS 1
 
-Client::Client(std::string f_ip, std::string f_port, std::string f_topic) 
-  : m_topic(f_topic) {
+Client::Client(std::string f_ip, std::string f_port, std::string f_topic) {
+  
+  m_topic = f_topic; 
   m_sock = zmq::socket_t(m_ctx, zmq::socket_type::pub);
 
   const std::string addr = "tcp://" + f_ip + ":" + f_port;

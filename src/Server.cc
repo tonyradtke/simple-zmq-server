@@ -3,9 +3,9 @@
 #define kSLEEP_MS 1 
 
 
-//pair
 Server::Server(std::string f_ip, std::string f_port, std::string f_topic) {
   m_sock = zmq::socket_t(m_ctx, zmq::socket_type::sub);
+
   const std::string addr = "tcp://" + f_ip + ":" + f_port;
   m_sock.connect(addr);
   
@@ -24,7 +24,7 @@ Server::Server(bool f_localhost) {
     std::cout << "created a localhost server\n";
   }
   else {
-    m_sock.bind("tcp://*:8000");
+    m_sock.connect("tcp://*:8000");
     std::cout << "created an open server\n";
   }
 
